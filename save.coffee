@@ -77,7 +77,7 @@ module.exports = (env) ->
             if (err)
               env.logger.error "File '#{readFilename}' not found in FTP readFile: "
               reject()
-             _saveFilename = saveFilename
+            _saveFilename = saveFilename
             if timestamp
               d = new Date()
               ts = dateFormat(d,"yyyymmdd-HHMMss")
@@ -134,12 +134,13 @@ module.exports = (env) ->
               saveFilename = ts + "_" + saveFilename
             unless saveFilename.startsWith("/") then saveFilename = "/" + saveFilename
             saveFilename = _config.path + saveFilename
-            @dbx.filesUpload({path: saveFilename, strict_conflict: false,  contents: content})
+            if _config.overwrite then _mode = "overwrite" else _mode = "add"
+            @dbx.filesUpload({path: saveFilename, strict_conflict: false,  mode: _mode, autorename: true, contents: content})
             .then((response) ->
               env.logger.debug "File '#{saveFilename}' saved to Dropbox"
               resolve()
             ).catch (err) ->
-              env.logger.error "Error on save to Dropbox: " + err.message
+              env.logger.error "Error on save to Dropbox: " + err.error
               reject()
         )
       )

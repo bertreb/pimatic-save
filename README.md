@@ -41,7 +41,6 @@ password:
 path:
   description: "Remote path of the backup server where the config should be saved"
   type: "string"
-  required: false
 ```
 
 The path is the path from the login root that is specific for your ftp account. The path needs to exist on the ftp server!
@@ -58,8 +57,11 @@ accessToken:
 path:
   description: "Remote path of the backup server where the config should be saved"
   type: "string"
-  required: false
+overwrite:
+  description: "If enabled and a file already exists on Dropbox the new version will overwrite the old one. If disabled the file will get a (version nr) added in the filename"
 ```
+
+The path doesn't have to exist in Dropbox. Its automatically created when the file is saved. The root of the path is the directory you selected when you created the Dropbox app.
 
 How to get the Dropbox accessToken?
 In your Dropbox account you go to "https://www.dropbox.com/developers/" and open the app console. Your create an app, and select the Dropbx Api and select "App folder– Access to a single folder created specifically for your app." You could choose assess to all files, and give it a name (not relevant for plugin).

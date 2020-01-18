@@ -21,7 +21,6 @@ module.exports = {
       path:
         description: "Remote path of the backup server where the config should be saved"
         type: "string"
-        required: false
   }
   SaveDropboxDevice: {
     title: "SaveDropbox config options"
@@ -34,6 +33,8 @@ module.exports = {
       path:
         description: "Remote path of the backup server where the config should be saved"
         type: "string"
-        required: false
+      overwrite:
+        description: "If enabled and a file already exists on Dropbox the new version will overwrite the old one. If disabled the file will get a (version nr) added in the filename"
+        type: "boolean"
   }
 }
