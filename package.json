@@ -11,9 +11,10 @@
     "README.md",
     "save-config-schema.coffee",
     "device-config-schme.coffee",
+    "HISTORY.md",
     "LICENCE"
   ],
-  "version": "0.0.1",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/bertreb/pimatic-save.git"
