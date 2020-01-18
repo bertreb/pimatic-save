@@ -11,6 +11,13 @@ save "[localpath/]filename" [with timestamp] to <SaveFtpDive | SaveDropboxDevice
 The optional 'with timestamp' adds a timestamp in front of the filename.
 The timestamp format is "yyyymmdd-hhmmss_".
 The filename can hold a local path and should the local operating system conventions (linux, windows). When adding an action the existance of the file is checked. The file needs to exist for the rule to be saved.
+The base of the filename is the home directory of pimatic. For rpi thats mostly the /home/pi/pimatic-app directory. You could use directory navigation like "../.." in the filename to select files outside the base directory.
+
+To make a daily backup during the night at 1:00 your config.json the rule is
+When
+  its 1:00
+Then
+  save "config.json" with timestamp to <your FtpOrDropbox Device>
 
 # The SaveFtpDevice
 
@@ -54,6 +61,6 @@ path:
   required: false
 ```
 
-How to the Dropbox accessToken?
+How to get the Dropbox accessToken?
 In your Dropbox account you go to "https://www.dropbox.com/developers/" and open the app console. Your create an app, and select the Dropbx Api and select "App folder– Access to a single folder created specifically for your app." You could choose assess to all files, and give it a name (not relevant for plugin).
 In the dropbox app configuration page under "OAuth 2" you generate an access token. This token should be copied and put into the accessToken field of the device config

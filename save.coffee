@@ -38,13 +38,11 @@ module.exports = (env) ->
       @port = @config.port
       @username = @config.username
       @password = @config.password
-      #@path = if @config.path? then @config.path else ""
+      @root = path.resolve @framework.maindir, '../..'
       @_setPresence(off)
 
       FtpClient = require 'ftp'
       @client = new FtpClient()
-
-      # Set the connection options
 
       # Catch any error
       @client.on "error", (err) =>
@@ -75,23 +73,20 @@ module.exports = (env) ->
         })
         @client.on "ready", =>
           @_setPresence(on)
-          fs.readFile(path.join(__dirname, readFilename), 'utf8', (err, content) =>
+          fs.readFile(path.join(@root, readFilename), 'utf8', (err, content) =>
             if (err)
               env.logger.error "File '#{readFilename}' not found in FTP readFile: "
               reject()
-            # If the path does not end with a slash, add one
-            #_config = (_.find(@framework.config.devices, (d) => d.id is @saveDeviceId))
-            _saveFilename = saveFilename
+             _saveFilename = saveFilename
             if timestamp
               d = new Date()
               ts = dateFormat(d,"yyyymmdd-HHMMss")
               _saveFilename = ts + "_" + _saveFilename
-            #if @path.endsWith('/')
+            # If the path does not end with a slash, add one
             if _config.path.endsWith('/')
               slash = ''
             else
               slash = '/'
-            #env.logger.debug "FTP fullfilename: " + _config.path + slash + saveFilename
             @client.put content, _config.path + slash + _saveFilename, (err) =>
               if err
                 env.logger.error "Error put, probably wrong path (not existing on ftp server): " + err
@@ -117,7 +112,7 @@ module.exports = (env) ->
       @name = @config.name
 
       @accessToken = @config.accessToken
-      #@path = if @config.path? then @config.path else ""
+      @root = path.resolve @framework.maindir, '../..'
 
       @dbx = new Dropbox({accessToken: @accessToken, fetch: fetch})
       if @dbx?
@@ -128,7 +123,7 @@ module.exports = (env) ->
     upload: (readFilename, timestamp, saveFilename, saveDeviceId) =>
       return new Promise((resolve,reject) =>
         _config = (_.find(@framework.config.devices, (d) => d.id is saveDeviceId))
-        fs.readFile(path.join(__dirname, readFilename), 'utf8', (err, content) =>
+        fs.readFile(path.join(@root, readFilename), 'utf8', (err, content) =>
           if (err)
             env.logger.error "File '#{readFilename}' not found in Dropbox readFile: "
             reject()
@@ -156,6 +151,7 @@ module.exports = (env) ->
   class SaveActionProvider extends env.actions.ActionProvider
 
     constructor: (@framework, @saveClasses) ->
+      @root = path.resolve @framework.maindir, '../..'
 
     _saveClasses: (_cl) =>
       for _saveClass in @saveClasses
@@ -174,13 +170,13 @@ module.exports = (env) ->
       timestamp = null
 
       setFilename = (m, filename) =>
-        if fs.existsSync(path.join(__dirname, filename))
+        if fs.existsSync(path.join(@root, filename))
           readFilename = filename
         else
           context?.addError("File '#{filename}'' does not excist")
           return
 
-      # Action arguments: save "filename" to <saveDevice>
+      # Action arguments: save "filename" [with timestamp] to <saveDevice>
       m = M(input, context)
         .match('save ')
         .matchString(setFilename)
