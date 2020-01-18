@@ -93,7 +93,7 @@ module.exports = (env) ->
                 @client.destroy()
                 reject()
               else
-                env.logger.debug "File '#{_saveFilename}' saved to FTP server"
+                env.logger.info "File '#{_saveFilename}' saved to FTP server"
                 @client.destroy()
                 resolve()
           )
@@ -137,7 +137,7 @@ module.exports = (env) ->
             if _config.overwrite then _mode = "overwrite" else _mode = "add"
             @dbx.filesUpload({path: saveFilename, strict_conflict: false,  mode: _mode, autorename: true, contents: content})
             .then((response) ->
-              env.logger.debug "File '#{saveFilename}' saved to Dropbox"
+              env.logger.info "File '#{saveFilename}' saved to Dropbox"
               resolve()
             ).catch (err) ->
               env.logger.error "Error on save to Dropbox: " + err.error
