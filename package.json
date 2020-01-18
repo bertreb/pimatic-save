@@ -1,0 +1,43 @@
+{
+  "name": "pimatic-save",
+  "description": "Save files to a backup medium",
+  "author": {
+    "name": "Bert Gierveld",
+    "email": "gitbertreb@gmail.com"
+  },
+  "main": "save",
+  "saves": [
+    "save.coffee",
+    "README.md",
+    "save-config-schema.coffee",
+    "device-config-schme.coffee",
+    "LICENCE"
+  ],
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bertreb/pimatic-save.git"
+  },
+  "configSchema": "save-config-schema.coffee",
+  "dependencies": {
+    "dateformat": "^3.0.3",
+    "dropbox": "^4.0.30",
+    "ftp": "^0.3.10",
+    "isomorphic-fetch": "^2.2.1",
+    "path": "^0.12.7"
+  },
+  "peerDependencies": {
+    "pimatic": ">=0.8.0 <1.0.0"
+  },
+  "engines": {
+    "node": ">=0.10.0",
+    "npm": ">=1.1.0"
+  },
+  "homepage": "https://github.com/bertreb/pimatic-save#readme",
+  "maintainers": [
+    {
+      "name": "bertreb",
+      "email": "gitbertreb@gmail.com"
+    }
+  ]
+}
