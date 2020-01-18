@@ -1,7 +1,7 @@
 # pimatic-save
 Plugin for saving files to backup media
 
-With this plugin you can save files from the system Pimatic is running to a backup medium. The supported media are FTP and Dropbox.
+With this plugin you can save files from the system Pimatic is running to a backup medium. The supported media in this first release are FTP and Dropbox.
 
 The save of a file is done via an action rule. The medium independent action syntax is
 ```
