@@ -13,7 +13,7 @@ module.exports = (env) ->
   class SavePlugin extends env.plugins.Plugin
 
     init: (app, @framework, @config) =>
-      
+
       deviceConfigDef = require("./device-config-schema")
       @framework.deviceManager.registerDeviceClass('SaveFtpDevice', {
         configDef: deviceConfigDef.SaveFtpDevice,
@@ -26,7 +26,7 @@ module.exports = (env) ->
       saveClasses = ["SaveFtpDevice","SaveDropboxDevice"]
       @framework.ruleManager.addActionProvider(new SaveActionProvider(@framework, saveClasses))
 
-  
+
   class SaveFtpDevice extends env.devices.PresenceSensor
 
     constructor: (@config, lastState, @framework) ->
@@ -84,7 +84,7 @@ module.exports = (env) ->
             _saveFilename = saveFilename
             if timestamp
               d = new Date()
-              ts = dateFormat(d,"yyyymmdd_HHMMss")
+              ts = dateFormat(d,"yyyymmdd-HHMMss")
               _saveFilename = ts + "_" + _saveFilename
             #if @path.endsWith('/')
             if _config.path.endsWith('/')
@@ -118,7 +118,7 @@ module.exports = (env) ->
 
       @accessToken = @config.accessToken
       #@path = if @config.path? then @config.path else ""
-      
+
       @dbx = new Dropbox({accessToken: @accessToken, fetch: fetch})
       if @dbx?
         @_setPresence(on)
@@ -135,7 +135,7 @@ module.exports = (env) ->
           if @dbx?
             if timestamp
               d = new Date()
-              ts = dateFormat(d,"yyyymmdd_HHMMss")
+              ts = dateFormat(d,"yyyymmdd-HHMMss")
               saveFilename = ts + "_" + saveFilename
             unless saveFilename.startsWith("/") then saveFilename = "/" + saveFilename
             saveFilename = _config.path + saveFilename
@@ -148,23 +148,23 @@ module.exports = (env) ->
               reject()
         )
       )
-  
+
     destroy:() =>
       super()
 
 
   class SaveActionProvider extends env.actions.ActionProvider
-    
+
     constructor: (@framework, @saveClasses) ->
-      
+
     _saveClasses: (_cl) =>
       for _saveClass in @saveClasses
         if _cl is _saveClass
           return true
       return false
 
-    parseAction: (input, context) =>      
-      @saveDevices = _(@framework.deviceManager.devices).values().filter( 
+    parseAction: (input, context) =>
+      @saveDevices = _(@framework.deviceManager.devices).values().filter(
         (device) => @_saveClasses(device.config.class)
       ).value()
       readFilename = null
@@ -179,7 +179,7 @@ module.exports = (env) ->
         else
           context?.addError("File '#{filename}'' does not excist")
           return
-      
+
       # Action arguments: save "filename" to <saveDevice>
       m = M(input, context)
         .match('save ')
@@ -205,8 +205,8 @@ module.exports = (env) ->
           token: match
           nextInput: input.substring(match.length)
           actionHandler: new SaveActionHandler(@framework, @, readFilename, timestamp, saveFilename, saveDevice)
-        }       
-      else    
+        }
+      else
         return null
 
 
