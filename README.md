@@ -44,6 +44,9 @@ path:
 ```
 
 The path is the path from the login root that is specific for your ftp account. The path needs to exist on the ftp server!
+When a file already exists, the old version will be overwritten!
+
+The FTP connection is made only when a file is saved. So the presence dot will only be presence on saving a file.
 
 # The SaveDropDevice
 
@@ -66,3 +69,8 @@ The path doesn't have to exist in Dropbox. Its automatically created when the fi
 How to get the Dropbox accessToken?
 In your Dropbox account you go to "https://www.dropbox.com/developers/" and open the app console. Your create an app, and select the Dropbx Api and select "App folder– Access to a single folder created specifically for your app." You could choose assess to all files, and give it a name (not relevant for plugin).
 In the dropbox app configuration page under "OAuth 2" you generate an access token. This token should be copied and put into the accessToken field of the device config
+
+The presence dot will stay present after the dropbox connection was made.
+
+
+The plugin is in development. You could backup Pimatic before you are using this plugin!
