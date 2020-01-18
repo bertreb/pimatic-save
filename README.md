@@ -62,7 +62,7 @@ path:
   type: "string"
 overwrite:
   description: "If enabled and a file already exists on Dropbox the new version will overwrite the old one.
-  If disabled the file will get a (version nr) added in the filename"
+    If disabled the file will get a (version nr) added in the filename"
 ```
 
 The path doesn't have to exist in Dropbox. Its automatically created when the file is saved. The root of the path is the directory you selected when you created the Dropbox app.
