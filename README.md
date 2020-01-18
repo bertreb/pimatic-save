@@ -68,6 +68,7 @@ overwrite:
 The path doesn't have to exist in Dropbox. Its automatically created when the file is saved. The root of the path is the directory you selected when you created the Dropbox app.
 
 How to get the Dropbox accessToken?
+
 In your Dropbox account you go to "https://www.dropbox.com/developers/" and open the app console. Create an app, select the Dropbox Api and select "App folder– Access to a single folder created specifically for your app." You could choose assess to all files, and give it a name (not relevant for plugin).
 In the dropbox app configuration page under "OAuth 2" you generate an access token. This token should be copied and put into the accessToken field of the device config
 
