@@ -18,6 +18,7 @@ To make a daily backup during the night at 1:00 your config.json the rule is
 When
 - its 1:00
 
+
 Then
 - save "config.json" with timestamp to <your FtpOrDropbox Device>
 
