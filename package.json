@@ -23,7 +23,6 @@
   "dependencies": {
     "dateformat": "^3.0.3",
     "dropbox": "^4.0.30",
-    "ftp": "^0.3.10",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.15",
     "path": "^0.12.7",
