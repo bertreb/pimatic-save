@@ -112,7 +112,7 @@ module.exports = (env) ->
     upload: (readFilename, timestamp, saveFilename, saveDeviceId) =>
       return new Promise((resolve,reject) =>
         _config = (_.find(@framework.config.devices, (d) => d.id is saveDeviceId))
-        fs.readFile(path.join(@root, readFilename), 'utf8', (err, content) =>
+        fs.readFile(path.join(@root, readFilename), (err, content) =>
           if (err)
             env.logger.error "File '#{readFilename}' not found in Dropbox readFile: "
             reject()
