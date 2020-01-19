@@ -14,10 +14,11 @@ The filename can hold a local path and should the local operating system convent
 The base of the filename is the home directory of Pimatic. For rpi thats mostly the /home/pi/pimatic-app directory. You could use directory navigation like "../.." in the filename to select files outside the base directory.
 
 To make a daily backup during the night at 1:00 your config.json the rule is
+
 When
-  its 1:00
+- its 1:00
 Then
-  save "config.json" with timestamp to <your FtpOrDropbox Device>
+- save "config.json" with timestamp to <your FtpOrDropbox Device>
 
 # The SaveFtpDevice
 
