@@ -5,7 +5,7 @@ With this plugin you can save files from the system Pimatic is running to a back
 
 The save of a file is done via an action rule. The medium independent action syntax is
 ```
-save "[localpath/]filename" [with timestamp] to <SaveFtpDive | SaveDropboxDevice>
+save "[localpath/]filename" [with timestamp] to SaveFtpDevice | SaveDropboxDevice
 ```
 
 The optional 'with timestamp' adds a timestamp in front of the filename.
