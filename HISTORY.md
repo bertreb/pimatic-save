@@ -12,3 +12,6 @@
 	* update presence dot
 * 20200119, v0.1.5
 	* more compatible file format in dropbox and Ftp
+* 20200119, v0.1.6
+	* more readable timestamp (identical to pimatic-backup)
+	* complete path+filename in missing file error in rule editor

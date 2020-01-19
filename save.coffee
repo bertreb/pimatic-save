@@ -62,7 +62,7 @@ module.exports = (env) ->
             _saveFilename = saveFilename
             if timestamp
               d = new Date()
-              ts = dateFormat(d,"yyyymmdd-HHMMss")
+              ts = dateFormat(d,"yyyy-mm-dd_HHMMss")
               _saveFilename = ts + "_" + _saveFilename
             # If the path does not end with a slash, add one
             if _config.path.endsWith('/')
@@ -119,7 +119,7 @@ module.exports = (env) ->
           #if @dbx?
           if timestamp
             d = new Date()
-            ts = dateFormat(d,"yyyymmdd-HHMMss")
+            ts = dateFormat(d,"yyyy-mm-dd_HHMMss")
             saveFilename = ts + "_" + saveFilename
           if _config.dateStructure?
             if _config.dateStructure
@@ -168,7 +168,7 @@ module.exports = (env) ->
         if fs.existsSync(path.join(@root, filename))
           readFilename = filename
         else
-          context?.addError("File '#{filename}'' does not excist")
+          context?.addError("File " + @root + filename + "' does not excist")
           return
 
       # Action arguments: save "filename" [with timestamp] to <saveDevice>
