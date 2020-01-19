@@ -3,12 +3,12 @@ module.exports = (env) ->
   events = env.require 'events'
   fs = require 'fs'
   path = require 'path'
+  FtpClient = require 'promise-ftp'
   Dropbox = require('dropbox').Dropbox
   fetch = require 'isomorphic-fetch'
   M = env.matcher
   _ = require 'lodash'
   dateFormat = require('dateformat')
-  #md5 = require 'md5'
 
   class SavePlugin extends env.plugins.Plugin
 
@@ -41,24 +41,7 @@ module.exports = (env) ->
       @root = path.resolve @framework.maindir, '../..'
       @_setPresence(off)
 
-      FtpClient = require 'ftp'
       @client = new FtpClient()
-
-      # Catch any error
-      @client.on "error", (err) =>
-        switch err.code
-          when "ECONNREFUSED"
-            env.logger.error "Can't connect to FTP server, server probably offline"
-          else
-            env.logger.error "Error: " + err.message
-
-      @client.on "close", () =>
-        @_setPresence(off)
-        env.logger.debug "Connection to ftp server closed"
-
-      # When ready start backup
-      @client.on "ready", =>
-        @_setPresence(on)
 
       super()
 
@@ -71,8 +54,7 @@ module.exports = (env) ->
           user: _config.username,
           password: _config.password
         })
-        @client.on "ready", =>
-          @_setPresence(on)
+        .then((serverMessage) =>
           fs.readFile(path.join(@root, readFilename), 'utf8', (err, content) =>
             if (err)
               env.logger.error "File '#{readFilename}' not found in FTP readFile: "
@@ -90,14 +72,23 @@ module.exports = (env) ->
             @client.put content, _config.path + slash + _saveFilename, (err) =>
               if err
                 env.logger.error "Error put, probably wrong path (not existing on ftp server): " + err
-                @client.destroy()
+                @client.end()
                 reject()
               else
                 env.logger.info "File '#{_saveFilename}' saved to FTP server"
-                @client.destroy()
+                @client.end()
                 resolve()
           )
-       )
+        )
+        .catch((err) =>
+          switch err.code
+            when "ECONNREFUSED"
+              env.logger.error "Can't connect to FTP server, server probably offline"
+            else
+              env.logger.error "Error: " + err.message
+          reject()
+        )
+      )
 
     destroy: () =>
       @client.destroy()
@@ -114,9 +105,7 @@ module.exports = (env) ->
       @accessToken = @config.accessToken
       @root = path.resolve @framework.maindir, '../..'
 
-      @dbx = new Dropbox({accessToken: @accessToken, fetch: fetch})
-      if @dbx?
-        @_setPresence(on)
+      @_setPresence(off)
 
       super()
 
@@ -127,21 +116,26 @@ module.exports = (env) ->
           if (err)
             env.logger.error "File '#{readFilename}' not found in Dropbox readFile: "
             reject()
-          if @dbx?
-            if timestamp
-              d = new Date()
-              ts = dateFormat(d,"yyyymmdd-HHMMss")
-              saveFilename = ts + "_" + saveFilename
-            unless saveFilename.startsWith("/") then saveFilename = "/" + saveFilename
-            saveFilename = _config.path + saveFilename
-            if _config.overwrite then _mode = "overwrite" else _mode = "add"
-            @dbx.filesUpload({path: saveFilename, strict_conflict: false,  mode: _mode, autorename: true, contents: content})
-            .then((response) ->
-              env.logger.info "File '#{saveFilename}' saved to Dropbox"
-              resolve()
-            ).catch (err) ->
-              env.logger.error "Error on save to Dropbox: " + err.error
-              reject()
+          #if @dbx?
+          if timestamp
+            d = new Date()
+            ts = dateFormat(d,"yyyymmdd-HHMMss")
+            saveFilename = ts + "_" + saveFilename
+          if _config.dateStructure?
+            if _config.dateStructure
+              _dateStructure = "/" + dateFormat(d,"yyyy") + "/" + dateFormat(d,"mm") + "/" + dateFormat(d,"dd") + "/"
+              saveFilename = _dateStructure + saveFilename
+          saveFilename = _config.path + saveFilename
+          unless saveFilename.startsWith("/") then saveFilename = "/" + saveFilename
+          if _config.overwrite then _mode = "overwrite" else _mode = "add"
+          @dbx = new Dropbox({accessToken: @accessToken, fetch: fetch})
+          @dbx.filesUpload({path: saveFilename, strict_conflict: false,  mode: _mode, autorename: true, contents: content})
+          .then((response) ->
+            env.logger.info "File '#{saveFilename}' saved to Dropbox"
+            resolve()
+          ).catch (err) ->
+            env.logger.error "Error on save to Dropbox: " + err.error
+            reject()
         )
       )
 
@@ -216,8 +210,10 @@ module.exports = (env) ->
           return __("would save file \"%s\"", @readFilename)
         else
           @saveDevice.upload(@readFilename, @timestamp, @saveFilename, @saveDevice.id).then(() =>
+            @saveDevice._setPresence(on)
             return __("\"%s\" was saved", @readFilename)
           ).catch((err)=>
+            @saveDevice._setPresence(off)
             return __("\"%s\" was not saved", @readFilename)
           )
 

@@ -59,20 +59,23 @@ accessToken:
 path:
   description: "Remote path of the backup server where the config should be saved"
   type: "string"
+dateStructure:
+  description: "Automatic creation of /year/month/day/ directories for datebased timestamping. Structure is created after path"
+  type: "boolean"
 overwrite:
   description: "If enabled and a file already exists on Dropbox the new version will overwrite the old one.
     If disabled the file will get a (version nr) added in the filename"
   type: "boolean"
 ```
 
-The path doesn't have to exist in Dropbox. Its automatically created when the file is saved. The root of the path is the directory you selected when you created the Dropbox app.
+The path doesn't have to exist in Dropbox. Its automatically created when the file is saved. The root of the path is the directory you selected when you created the Dropbox app. When dateStructure is enabled, behind the path a date based directory structure /year/month/day/ is created and the file is saved to /path/year/month/day/file.
 
 ### How to get the Dropbox accessToken?
 
 In your Dropbox account you go to "https://www.dropbox.com/developers/" and open the app console. Create an app, select the Dropbox Api and select "App folder– Access to a single folder created specifically for your app." You could choose assess to all files, and give it a name (not relevant for plugin).
 In the dropbox app configuration page under "OAuth 2" you generate an access token. This token should be copied and put into the accessToken field of the device config
 
-The presence dot will stay present after the dropbox connection was made.
+The presence dot goes present after first successful save and absent after an error in save.
 
 
 The plugin is in development. You could backup Pimatic before you are using this plugin!

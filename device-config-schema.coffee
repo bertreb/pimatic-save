@@ -33,6 +33,9 @@ module.exports = {
       path:
         description: "Remote path of the backup server where the config should be saved"
         type: "string"
+      dateStructure:
+        description: "Automatic creation of Year/Month/Day/ directories for datebased timestamping. Structure is created after path"
+        type: "boolean"
       overwrite:
         description: "If enabled and a file already exists on Dropbox the new version will overwrite the old one. If disabled the file will get a (version nr) added in the filename"
         type: "boolean"
