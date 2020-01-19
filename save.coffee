@@ -55,7 +55,7 @@ module.exports = (env) ->
           password: _config.password
         })
         .then((serverMessage) =>
-          fs.readFile(path.join(@root, readFilename), 'utf8', (err, content) =>
+          fs.readFile(path.join(@root, readFilename), (err, content) =>
             if (err)
               env.logger.error "File '#{readFilename}' not found in FTP readFile: "
               reject()

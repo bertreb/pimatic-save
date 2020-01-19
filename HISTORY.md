@@ -10,5 +10,5 @@
 	* optional automatic date directory structure /yyyy/mm/dd/
 	* replaced event based by promise based ftp client
 	* update presence dot
-* 20200118, v0.1.4
-	* more compatible file format in dropbox
+* 20200119, v0.1.5
+	* more compatible file format in dropbox and Ftp
