@@ -13,7 +13,7 @@ The timestamp format is "yyyy-mm-dd_hhmmss". With hours in 24-hour format.
 The filename can hold a local path and should the local operating system conventions (linux, windows). When adding an action the existance of the file is checked. The file needs to exist for the rule to be saved.
 The base of the filename is the home directory of Pimatic. For rpi thats mostly the /home/pi/pimatic-app directory. You could use directory navigation like "../.." in the filename to select files outside the base directory.
 
-To make a daily backup during the night at 1:00 your config.json the rule is
+To make a daily backup during the night at 1:00 of your config.json the rule is
 
 ```
 when 'its 1:00' then 'save "config.json" with timestamp to <your FtpOrDropbox Device>'
