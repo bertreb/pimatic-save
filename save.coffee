@@ -165,10 +165,20 @@ module.exports = (env) ->
       timestamp = null
 
       setFilename = (m, filename) =>
-        if fs.existsSync(path.join(@root, filename))
-          readFilename = filename
-        else
-          context?.addError("File " + @root + filename + "' does not excist")
+        fullfilename = path.join(@root, filename)
+        try
+          stats = fs.statSync(fullfilename)
+          if stats.isFile()
+            readFilename = filename
+            return
+          else if stats.isDirectory()
+            context?.addError("'" + fullfilename + "' is a directory")
+            return            
+          else 
+            context?.addError("File " + fullfilename + "' does not excist")
+            return            
+        catch err
+          context?.addError("File " + fullfilename + "' does not excist")
           return
 
       # Action arguments: save "filename" [with timestamp] to <saveDevice>

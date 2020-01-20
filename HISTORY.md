@@ -15,3 +15,5 @@
 * 20200119, v0.1.6
 	* more readable timestamp (identical to pimatic-backup)
 	* complete path+filename in missing file error in rule editor
+* 20200120, v0.1.7
+	* improved error handling on file existance
