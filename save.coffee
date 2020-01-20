@@ -41,7 +41,7 @@ module.exports = (env) ->
       @root = path.resolve @framework.maindir, '../..'
       @_setPresence(off)
 
-      @client = new FtpClient()
+      @client = new FtpClient() 
 
       super()
 
