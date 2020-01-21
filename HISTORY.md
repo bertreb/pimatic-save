@@ -19,3 +19,5 @@
 	* improved error handling on file existance
 * 20200121, v0.1.8
 	* consequent destroy client after upload
+* 20200121, v0.1.9
+	* to allow multiple upload rules at same time, FTP and Dropbox connections are now multi instance, and disconnected  after upload

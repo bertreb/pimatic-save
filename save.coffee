@@ -41,16 +41,13 @@ module.exports = (env) ->
       @root = path.resolve @framework.maindir, '../..'
       @_setPresence(off)
 
-      @client = new FtpClient() 
-
       super()
 
     upload: (readFilename, timestamp, saveFilename, @saveDeviceId) =>
       return new Promise((resolve,reject) =>
         _config = (_.find(@framework.config.devices, (d) => d.id is @saveDeviceId))
-        if @client?
-          env.logger.debug "Connection status: " + @client.getConnectionStatus()
-        @client.connect({
+        client = new FtpClient() 
+        client.connect({
           host: _config.host,
           port: _config.port or 21,
           user: _config.username,
@@ -60,7 +57,7 @@ module.exports = (env) ->
           fs.readFile(path.join(@root, readFilename), (err, content) =>
             if (err)
               env.logger.error "File '#{readFilename}' not found in FTP readFile: "
-              @client.destroy()
+              client.destroy()
               reject()
             _saveFilename = saveFilename
             if timestamp
@@ -72,15 +69,17 @@ module.exports = (env) ->
               slash = ''
             else
               slash = '/'
-            @client.put content, _config.path + slash + _saveFilename, (err) =>
-              if err
-                env.logger.error "Error put, probably wrong path (not existing on ftp server): " + err
-                @client.destroy()
-                reject()
-              else
-                env.logger.info "File '#{_saveFilename}' saved to FTP server"
-                @client.destroy()
-                resolve()
+            client.put(content, _config.path + slash + _saveFilename)
+            .then(() =>
+              env.logger.info "File '#{_saveFilename}' saved to FTP server"
+              client.destroy()
+              resolve()
+            )
+            .catch((err) =>
+              env.logger.error "Error put, probably wrong path (not existing on ftp server): " + err
+              client.destroy()
+              reject()
+            )
           )
         )
         .catch((err) =>
@@ -89,15 +88,12 @@ module.exports = (env) ->
               env.logger.error "Can't connect to FTP server, server probably offline"
             else
               env.logger.error "Error: " + err.message
-          @client.destroy()
+          client.destroy()
           reject()
         )
       )
 
     destroy: () =>
-      @client.destroy()
-      @client.removeAllListeners()
-      clearTimeout(@timerSaveFtp)
       super()
 
   class SaveDropboxDevice extends env.devices.PresenceSensor
@@ -120,7 +116,6 @@ module.exports = (env) ->
           if (err)
             env.logger.error "File '#{readFilename}' not found in Dropbox readFile: "
             reject()
-          #if @dbx?
           if timestamp
             d = new Date()
             ts = dateFormat(d,"yyyy-mm-dd_HHMMss")
@@ -132,8 +127,8 @@ module.exports = (env) ->
           saveFilename = _config.path + saveFilename
           unless saveFilename.startsWith("/") then saveFilename = "/" + saveFilename
           if _config.overwrite then _mode = "overwrite" else _mode = "add"
-          @dbx = new Dropbox({accessToken: @accessToken, fetch: fetch})
-          @dbx.filesUpload({path: saveFilename, strict_conflict: false,  mode: _mode, autorename: true, contents: content})
+          dbx = new Dropbox({accessToken: @accessToken, fetch: fetch})
+          dbx.filesUpload({path: saveFilename, strict_conflict: false,  mode: _mode, autorename: true, contents: content})
           .then((response) ->
             env.logger.info "File '#{saveFilename}' saved to Dropbox"
             resolve()
