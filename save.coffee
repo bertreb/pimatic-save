@@ -48,6 +48,8 @@ module.exports = (env) ->
     upload: (readFilename, timestamp, saveFilename, @saveDeviceId) =>
       return new Promise((resolve,reject) =>
         _config = (_.find(@framework.config.devices, (d) => d.id is @saveDeviceId))
+        if @client?
+          env.logger.debug "Connection status: " + @client.getConnectionStatus()
         @client.connect({
           host: _config.host,
           port: _config.port or 21,
@@ -58,6 +60,7 @@ module.exports = (env) ->
           fs.readFile(path.join(@root, readFilename), (err, content) =>
             if (err)
               env.logger.error "File '#{readFilename}' not found in FTP readFile: "
+              @client.destroy()
               reject()
             _saveFilename = saveFilename
             if timestamp
@@ -72,11 +75,11 @@ module.exports = (env) ->
             @client.put content, _config.path + slash + _saveFilename, (err) =>
               if err
                 env.logger.error "Error put, probably wrong path (not existing on ftp server): " + err
-                @client.end()
+                @client.destroy()
                 reject()
               else
                 env.logger.info "File '#{_saveFilename}' saved to FTP server"
-                @client.end()
+                @client.destroy()
                 resolve()
           )
         )
@@ -86,6 +89,7 @@ module.exports = (env) ->
               env.logger.error "Can't connect to FTP server, server probably offline"
             else
               env.logger.error "Error: " + err.message
+          @client.destroy()
           reject()
         )
       )

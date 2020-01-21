@@ -17,3 +17,5 @@
 	* complete path+filename in missing file error in rule editor
 * 20200120, v0.1.7
 	* improved error handling on file existance
+* 20200121, v0.1.8
+	* consequent destroy client after upload
