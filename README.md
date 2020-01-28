@@ -78,5 +78,5 @@ In the dropbox app configuration page under "OAuth 2" you generate an access tok
 
 The presence dot goes present after first successful save and absent after an error in save.
 
-
+---
 The plugin is in development. You could backup Pimatic before you are using this plugin!
