@@ -60,7 +60,7 @@ path:
   description: "Remote path of the backup server where the config should be saved"
   type: "string"
 dateStructure:
-  description: "Automatic creation of /year/month/day/       directories for datebased timestamping.
+  description: "Automatic creation of /year/month/day directories for datebased timestamping.
        Structure is created after path"
   type: "boolean"
 overwrite:
