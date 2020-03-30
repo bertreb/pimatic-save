@@ -14,7 +14,7 @@
     "HISTORY.md",
     "LICENCE"
   ],
-  "version": "0.1.9",
+  "version": "0.1.10",
   "repository": {
     "type": "git",
     "url": "git://github.com/bertreb/pimatic-save.git"

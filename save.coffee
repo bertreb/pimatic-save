@@ -124,7 +124,8 @@ module.exports = (env) ->
             if _config.dateStructure
               _dateStructure = "/" + dateFormat(d,"yyyy") + "/" + dateFormat(d,"mm") + "/" + dateFormat(d,"dd") + "/"
               saveFilename = _dateStructure + saveFilename
-          saveFilename = _config.path + saveFilename
+          if _config.path.endsWith('/') then slash = '' else slash = '/'
+          saveFilename = _config.path + slash + saveFilename
           unless saveFilename.startsWith("/") then saveFilename = "/" + saveFilename
           if _config.overwrite then _mode = "overwrite" else _mode = "add"
           dbx = new Dropbox({accessToken: @accessToken, fetch: fetch})
