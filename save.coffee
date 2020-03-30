@@ -122,11 +122,12 @@ module.exports = (env) ->
             saveFilename = ts + "_" + saveFilename
           if _config.dateStructure?
             if _config.dateStructure
-              _dateStructure = "/" + dateFormat(d,"yyyy") + "/" + dateFormat(d,"mm") + "/" + dateFormat(d,"dd") + "/"
+              _dateStructure = dateFormat(d,"yyyy") + "/" + dateFormat(d,"mm") + "/" + dateFormat(d,"dd") + "/"
               saveFilename = _dateStructure + saveFilename
           if _config.path.endsWith('/') then slash = '' else slash = '/'
           saveFilename = _config.path + slash + saveFilename
           unless saveFilename.startsWith("/") then saveFilename = "/" + saveFilename
+          env.logger.debug "Writing file '#{readFilename}' to dropbox " + saveFilename
           if _config.overwrite then _mode = "overwrite" else _mode = "add"
           dbx = new Dropbox({accessToken: @accessToken, fetch: fetch})
           dbx.filesUpload({path: saveFilename, strict_conflict: false,  mode: _mode, autorename: true, contents: content})
