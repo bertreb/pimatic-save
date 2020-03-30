@@ -133,9 +133,10 @@ module.exports = (env) ->
           .then((response) ->
             env.logger.info "File '#{saveFilename}' saved to Dropbox"
             resolve()
-          ).catch (err) ->
-            env.logger.error "Error on save to Dropbox: " + err.error
+          ).catch ((err) ->
+            env.logger.error "Error on save to Dropbox: " + JSON.stringify(err.error,null,2)
             reject()
+          )
         )
       )
 
