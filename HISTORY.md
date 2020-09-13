@@ -23,5 +23,5 @@
 	* to allow multiple upload rules at same time, FTP and Dropbox connections are now multi instance, and disconnected  after upload
 * 20200329, v0.1.12
 	* edit path / file structure for dropbox save
-* 20200913, v0.1.13
+* 20200913, v0.1.14
 	* fix node-fetch vulnerability
