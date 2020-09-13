@@ -6,15 +6,16 @@
     "email": "gitbertreb@gmail.com"
   },
   "main": "save",
-  "saves": [
+  "files": [
     "save.coffee",
     "README.md",
     "save-config-schema.coffee",
     "device-config-schme.coffee",
     "HISTORY.md",
-    "LICENCE"
+    "LICENCE",
+    "npm-shrinkwrap.json"
   ],
-  "version": "0.1.14",
+  "version": "0.1.15",
   "repository": {
     "type": "git",
     "url": "git://github.com/bertreb/pimatic-save.git"
@@ -23,7 +24,6 @@
   "dependencies": {
     "dateformat": "^3.0.3",
     "dropbox": "^4.0.30",
-    "node-fetch": ">=2.6.1",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.15",
     "path": "^0.12.7",
