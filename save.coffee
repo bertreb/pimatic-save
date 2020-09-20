@@ -5,6 +5,7 @@ module.exports = (env) ->
   path = require 'path'
   FtpClient = require 'promise-ftp'
   Dropbox = require('dropbox').Dropbox
+  nodemailer = require('nodemailer')
   fetch = require 'isomorphic-fetch'
   M = env.matcher
   _ = require 'lodash'
@@ -23,7 +24,11 @@ module.exports = (env) ->
         configDef: deviceConfigDef.SaveDropboxDevice,
         createCallback: (config, lastState) => new SaveDropboxDevice(config, lastState, @framework)
       })
-      saveClasses = ["SaveFtpDevice","SaveDropboxDevice"]
+      @framework.deviceManager.registerDeviceClass('SaveMailDevice', {
+        configDef: deviceConfigDef.SaveMailDevice,
+        createCallback: (config, lastState) => new SaveMailDevice(config, lastState, @framework)
+      })
+      saveClasses = ["SaveFtpDevice","SaveDropboxDevice","SaveMailDevice"]
       @framework.ruleManager.addActionProvider(new SaveActionProvider(@framework, saveClasses))
 
 
@@ -143,6 +148,90 @@ module.exports = (env) ->
 
     destroy:() =>
       super()
+
+
+  class SaveMailDevice extends env.devices.PresenceSensor
+
+    constructor: (@config, lastState, @framework) ->
+      @id = @config.id
+      @name = @config.name
+
+      @address = @config.address
+      @to = @config.to ? @config.address
+      @password = @config.password
+      @server = @config.server
+      @port = @config.port ? 587
+      @subject = @config.subject ? ""
+      @text = @config.text ? "Message from pimatic-save."
+
+      @accessToken = @config.accessToken
+      @root = path.resolve @framework.maindir, '../..'
+
+      @_setPresence(off)
+
+      super()
+
+    upload: (readFilename, timestamp, saveFilename, saveDeviceId) =>
+      return new Promise((resolve,reject) =>
+        unless @address? and @password? then reject("Credentials not set")
+        _config = (_.find(@framework.config.devices, (d) => d.id is saveDeviceId))
+        fs.readFile(path.join(@root, readFilename), (err, content) =>
+          if (err)
+            env.logger.error "File '#{readFilename}' not found in mail readFile: "
+            reject()
+          d = new Date()
+          ts = dateFormat(d,"yyyy-mm-dd HH:MM:ss")
+          if timestamp
+            saveFilename = ts + " " + saveFilename
+          env.logger.debug "Sending file '#{readFilename}' to '#{@to}'"
+
+          transporter = nodemailer.createTransport({
+            host: @server,
+            port: @port,
+            auth:
+              user: @address
+              pass: @password
+          })
+
+          if @subject?
+            _subject = @subject + ', '
+          else
+            _subject = ""
+
+          mailOptions =
+            from: @address
+            to: @to
+            subject: _subject + ts 
+            text: @text
+            attachments: [ 
+              {
+                filename: saveFilename
+                content: content
+              }
+            ]
+
+          transporter.verify((err, success) =>
+            if err 
+              env.logger.debug "Error verifying server " + err
+              reject("Error verifying server")
+            else
+              env.logger.debug "Server is ready"
+              transporter.sendMail(mailOptions, (err, info) =>
+                if err
+                  env.logger.error "Error on save to mail: " + JSON.stringify(err.error,null,2)
+                  reject()
+                else
+                  env.logger.info "File '#{saveFilename}' saved to " + @to
+                  resolve()
+              )
+              resolve()
+          )
+        )
+      )
+
+    destroy:() =>
+      super()
+
 
 
   class SaveActionProvider extends env.actions.ActionProvider

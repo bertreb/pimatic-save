@@ -39,5 +39,33 @@ module.exports = {
       overwrite:
         description: "If enabled and a file already exists on Dropbox the new version will overwrite the old one. If disabled the file will get a (version nr) added in the filename"
         type: "boolean"
+  },
+  SaveMailDevice: {
+    title: "SaveMail config options"
+    type: "object"
+    extensions: ["xLink", "xAttributeOptions"]
+    properties:
+      address:
+        description: "Your email address"
+        type: "string"
+      password:
+        description: "Your email password"
+        type: "string"
+      server:
+        description: "smtp server address"
+        type: "string"
+      port:
+        description: "smtp port used, default 587"
+        type: "number"
+        default: 587
+      to:
+        description: "The email address the mail is sent to. If empty the from email is used"
+        type: "string"        
+      subject:
+        description: "The optional subject for the save mail"
+        type: "string"
+      text:
+        description: "The optional text for the save mail"
+        type: "string"
   }
 }
