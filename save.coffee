@@ -15,6 +15,9 @@ module.exports = (env) ->
 
     init: (app, @framework, @config) =>
 
+      @baseDir = path.resolve @framework.maindir, '../..'
+
+
       deviceConfigDef = require("./device-config-schema")
       @framework.deviceManager.registerDeviceClass('SaveFtpDevice', {
         configDef: deviceConfigDef.SaveFtpDevice,
@@ -29,7 +32,7 @@ module.exports = (env) ->
         createCallback: (config, lastState) => new SaveMailDevice(config, lastState, @framework)
       })
       saveClasses = ["SaveFtpDevice","SaveDropboxDevice","SaveMailDevice"]
-      @framework.ruleManager.addActionProvider(new SaveActionProvider(@framework, saveClasses))
+      @framework.ruleManager.addActionProvider(new SaveActionProvider(@framework, saveClasses, @baseDir))
 
 
   class SaveFtpDevice extends env.devices.PresenceSensor
@@ -221,7 +224,7 @@ module.exports = (env) ->
                   env.logger.error "Error on save to mail: " + JSON.stringify(err.error,null,2)
                   reject()
                 else
-                  env.logger.info "File '#{saveFilename}' saved to " + @to
+                  env.logger.info "File '#{readFilename}' saved to " + @to
                   resolve()
               )
               resolve()
@@ -236,7 +239,7 @@ module.exports = (env) ->
 
   class SaveActionProvider extends env.actions.ActionProvider
 
-    constructor: (@framework, @saveClasses) ->
+    constructor: (@framework, @saveClasses, @dir) ->
       @root = path.resolve @framework.maindir, '../..'
 
     _saveClasses: (_cl) =>
@@ -255,6 +258,14 @@ module.exports = (env) ->
       match = null
       timestamp = null
 
+      setFilename = (m, tokens) =>
+        readFilename = tokens
+        if (readFilename.join('')).indexOf(" ") >= 0
+          context?.addError("no spaces allowed in filestring")
+          return
+        return
+
+      ###
       setFilename = (m, filename) =>
         fullfilename = path.join(@root, filename)
         try
@@ -271,11 +282,12 @@ module.exports = (env) ->
         catch err
           context?.addError("File " + fullfilename + "' does not excist")
           return
+      ###
 
       # Action arguments: save "filename" [with timestamp] to <saveDevice>
       m = M(input, context)
         .match('save ')
-        .matchString(setFilename)
+        .matchStringWithVars(setFilename)
         .match(' with timestamp',{optional: true}, (m, t) ->
           timestamp = t
         )
@@ -296,7 +308,7 @@ module.exports = (env) ->
         return {
           token: match
           nextInput: input.substring(match.length)
-          actionHandler: new SaveActionHandler(@framework, @, readFilename, timestamp, saveFilename, saveDevice)
+          actionHandler: new SaveActionHandler(@framework, @, readFilename, timestamp, saveFilename, saveDevice, @dir)
         }
       else
         return null
@@ -304,18 +316,34 @@ module.exports = (env) ->
 
   class SaveActionHandler extends env.actions.ActionHandler
 
-    constructor: (@framework, @actionProvider, @readFilename, @timestamp, @saveFilename, @saveDevice) ->
+    constructor: (@framework, @actionProvider, @readFilename, @timestamp, @saveFilename, @saveDevice, @dir) ->
 
     executeAction: (simulate) =>
         if simulate
           return __("would save file \"%s\"", @readFilename)
         else
-          @saveDevice.upload(@readFilename, @timestamp, @saveFilename, @saveDevice.id).then(() =>
-            @saveDevice._setPresence(on)
-            return __("\"%s\" was saved", @readFilename)
-          ).catch((err)=>
-            @saveDevice._setPresence(off)
-            return __("\"%s\" was not saved", @readFilename)
+          @framework.variableManager.evaluateStringExpression(@readFilename).then( (strToLog) =>
+            filename = strToLog
+            saveFilename = filename
+            fullfilename = path.join(@dir, filename)
+            try
+              stats = fs.statSync(fullfilename)
+              if fullfilename.indexOf(" ")>=0
+                return __("\"%s\" no spaces allowed in filename",filename)
+              else if stats.isDirectory()
+                return __("\"%s\" is a directory", filename)
+              else if stats.isFile()
+                @saveDevice.upload(filename, @timestamp, saveFilename, @saveDevice.id).then(() =>
+                  @saveDevice._setPresence(on)
+                  return __("\"%s\" was saved", filename)
+                ).catch((err)=>
+                  @saveDevice._setPresence(off)
+                  return __("\"%s\" was not saved", filename)
+                )
+              else
+                return __("\"%s\" does not excist", filename)
+            catch err
+              return __("\"%s\" error in save execute", err)
           )
 
     destroy: () ->

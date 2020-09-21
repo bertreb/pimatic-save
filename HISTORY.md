@@ -25,3 +25,7 @@
 	* edit path / file structure for dropbox save
 * 20200913, v0.1.14
 	* fix node-fetch vulnerability
+* 20200920, v0.1.19
+	* added mail save
+* 20200921, v0.1.20
+	* added $variable in filename string
