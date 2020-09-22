@@ -240,7 +240,7 @@ module.exports = (env) ->
   class SaveActionProvider extends env.actions.ActionProvider
 
     constructor: (@framework, @saveClasses, @dir) ->
-      @root = path.resolve @framework.maindir, '../..'
+      #@root = path.resolve @framework.maindir, '../..'
 
     _saveClasses: (_cl) =>
       for _saveClass in @saveClasses
@@ -316,7 +316,7 @@ module.exports = (env) ->
 
   class SaveActionHandler extends env.actions.ActionHandler
 
-    constructor: (@framework, @actionProvider, @readFilename, @timestamp, @saveFilename, @saveDevice, @dir) ->
+    constructor: (@framework, @actionProvider, @readFilename, @timestamp, @saveFilename, @saveDevice, @baseDir) ->
 
     executeAction: (simulate) =>
         if simulate
@@ -325,14 +325,12 @@ module.exports = (env) ->
           @framework.variableManager.evaluateStringExpression(@readFilename).then( (strToLog) =>
             filename = strToLog
             saveFilename = filename
-            fullfilename = path.join(@dir, filename)
+            fullfilename = path.join(@baseDir, filename)
             try
-              stats = fs.statSync(fullfilename)
-              if fullfilename.indexOf(" ")>=0
+              #stats = fs.statSync(fullfilename)
+              if filename.indexOf(" ")>=0
                 return __("\"%s\" no spaces allowed in filename",filename)
-              else if stats.isDirectory()
-                return __("\"%s\" is a directory", filename)
-              else if stats.isFile()
+              else if fs.existsSync(filename)
                 @saveDevice.upload(filename, @timestamp, saveFilename, @saveDevice.id).then(() =>
                   @saveDevice._setPresence(on)
                   return __("\"%s\" was saved", filename)
