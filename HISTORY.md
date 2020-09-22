@@ -29,5 +29,5 @@
 	* added mail save
 * 20200921, v0.1.20
 	* added $variable in filename string
-* 20200922, v0.1.23
+* 20200922, v0.1.24
 	* edit pimatic-app dir as root

@@ -325,7 +325,7 @@ module.exports = (env) ->
         else
           @framework.variableManager.evaluateStringExpression(@readFilename).then( (strToLog) =>
             filename = strToLog
-            saveFilename = filename
+            saveFilename = path.basename(filename)
             fullfilename = path.join(@dir, filename)
             try
               #stats = fs.statSync(fullfilename)
