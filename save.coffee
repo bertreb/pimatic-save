@@ -178,7 +178,7 @@ module.exports = (env) ->
       return new Promise((resolve,reject) =>
         unless @address? and @password? then reject("Credentials not set")
         _config = (_.find(@framework.config.devices, (d) => d.id is saveDeviceId))
-        fs.readFile(path.join(@root, readFilename), (err, content) =>
+        fs.readFile(path.resolve(@root, readFilename), (err, content) =>
           if (err)
             env.logger.error "File '#{readFilename}' not found in mail readFile: "
             reject()
@@ -240,7 +240,7 @@ module.exports = (env) ->
   class SaveActionProvider extends env.actions.ActionProvider
 
     constructor: (@framework, @saveClasses, @dir) ->
-      #@root = path.resolve @framework.maindir, '../..'
+      @root = path.resolve @framework.maindir, '../..'
 
     _saveClasses: (_cl) =>
       for _saveClass in @saveClasses
@@ -316,7 +316,7 @@ module.exports = (env) ->
 
   class SaveActionHandler extends env.actions.ActionHandler
 
-    constructor: (@framework, @actionProvider, @readFilename, @timestamp, @saveFilename, @saveDevice, @baseDir) ->
+    constructor: (@framework, @actionProvider, @readFilename, @timestamp, @saveFilename, @saveDevice, @dir) ->
 
     executeAction: (simulate) =>
         if simulate
@@ -325,12 +325,12 @@ module.exports = (env) ->
           @framework.variableManager.evaluateStringExpression(@readFilename).then( (strToLog) =>
             filename = strToLog
             saveFilename = filename
-            fullfilename = path.join(@baseDir, filename)
+            fullfilename = path.join(@dir, filename)
             try
               #stats = fs.statSync(fullfilename)
-              if filename.indexOf(" ")>=0
+              if fullfilename.indexOf(" ")>=0
                 return __("\"%s\" no spaces allowed in filename",filename)
-              else if fs.existsSync(filename)
+              else if fs.existsSync(fullfilename)
                 @saveDevice.upload(filename, @timestamp, saveFilename, @saveDevice.id).then(() =>
                   @saveDevice._setPresence(on)
                   return __("\"%s\" was saved", filename)
