@@ -16,7 +16,7 @@ The base of the filename is the home directory of Pimatic. For rpi thats mostly 
 To make a daily backup during the night at 1:00 of your config.json the rule is
 
 ```
-when 'its 1:00' then 'save "config.json" with timestamp to <your FtpOrDropboxOrMail Device>'
+when 'its 1:00' then 'save "config.json" with timestamp to <your FtpOrMail Device>'
 ```
 
 # The SaveFtpDevice
