@@ -22,24 +22,6 @@ module.exports = {
         description: "Remote path of the backup server where the config should be saved"
         type: "string"
   }
-  SaveDropboxDevice: {
-    title: "SaveDropbox config options"
-    type: "object"
-    extensions: ["xLink", "xAttributeOptions"]
-    properties:
-      accessToken:
-        description: "AccesToken generated for your pimatic-save upload folder"
-        type: "string"
-      path:
-        description: "Remote path of the backup server where the config should be saved"
-        type: "string"
-      dateStructure:
-        description: "Automatic creation of Year/Month/Day/ directories for datebased timestamping. Structure is created after path"
-        type: "boolean"
-      overwrite:
-        description: "If enabled and a file already exists on Dropbox the new version will overwrite the old one. If disabled the file will get a (version nr) added in the filename"
-        type: "boolean"
-  },
   SaveMailDevice: {
     title: "SaveMail config options"
     type: "object"

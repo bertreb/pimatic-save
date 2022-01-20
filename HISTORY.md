@@ -31,3 +31,5 @@
 	* added $variable in filename string
 * 20200922, v0.1.24
 	* edit pimatic-app dir as root
+* 20220120, v0.2.0
+	* removal of DropboxSave due to new auth api

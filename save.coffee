@@ -4,7 +4,7 @@ module.exports = (env) ->
   fs = require 'fs'
   path = require 'path'
   FtpClient = require 'promise-ftp'
-  Dropbox = require('dropbox').Dropbox
+  #Dropbox = require('dropbox').Dropbox
   nodemailer = require('nodemailer')
   fetch = require 'isomorphic-fetch'
   M = env.matcher
@@ -23,15 +23,17 @@ module.exports = (env) ->
         configDef: deviceConfigDef.SaveFtpDevice,
         createCallback: (config, lastState) => new SaveFtpDevice(config, lastState, @framework)
       })
+      ###
       @framework.deviceManager.registerDeviceClass('SaveDropboxDevice', {
         configDef: deviceConfigDef.SaveDropboxDevice,
         createCallback: (config, lastState) => new SaveDropboxDevice(config, lastState, @framework)
       })
+      ###
       @framework.deviceManager.registerDeviceClass('SaveMailDevice', {
         configDef: deviceConfigDef.SaveMailDevice,
         createCallback: (config, lastState) => new SaveMailDevice(config, lastState, @framework)
       })
-      saveClasses = ["SaveFtpDevice","SaveDropboxDevice","SaveMailDevice"]
+      saveClasses = ["SaveFtpDevice","SaveMailDevice"]
       @framework.ruleManager.addActionProvider(new SaveActionProvider(@framework, saveClasses, @baseDir))
 
 
@@ -104,6 +106,7 @@ module.exports = (env) ->
     destroy: () =>
       super()
 
+  ###
   class SaveDropboxDevice extends env.devices.PresenceSensor
 
     constructor: (@config, lastState, @framework) ->
@@ -152,6 +155,7 @@ module.exports = (env) ->
     destroy:() =>
       super()
 
+    ###
 
   class SaveMailDevice extends env.devices.PresenceSensor
 
