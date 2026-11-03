@@ -1,6 +1,26 @@
 # pimatic-save
 Plugin for saving files to backup media
 
+## Security maintenance (November 2026)
+
+This archived project received a dependency security refresh. It now requires
+Node.js >=20 and npm >=7; use a currently supported Node.js release for deployment.
+Do not install this revision on the previously supported Node.js 10 runtime.
+Compatibility with a full legacy Pimatic installation must be checked before deployment.
+
+Nodemailer and Lodash were updated. Unused isomorphic-fetch and the npm path
+polyfill were removed (the plugin uses Node's built-in path module). The shrinkwrap
+was regenerated without the retired Dropbox dependency tree. Dropbox remains unsupported.
+
+Validation: `npm ci --ignore-scripts --legacy-peer-deps`, `npm test`, and
+`npm audit --legacy-peer-deps`. The peer Pimatic application is deliberately excluded
+from this plugin-only dependency audit; it requires a separate audit. Tests use a
+mock Pimatic environment, a local Nodemailer stream transport and a mock FTP client,
+without sending mail or connecting to external servers. They do not certify a complete
+Pimatic deployment. Existing installations and published npm packages are not updated
+by this repository change.
+
+
 With this plugin you can save files from the system Pimatic is running to a backup medium. The supported media in this release are FTP and mail.
 
 The save of a file is done via an action rule. The medium independent action syntax is
@@ -84,3 +104,4 @@ The presence dot goes present after first successful save and absent after an er
 
 ---
 The plugin is in development. You could backup Pimatic before you are using this plugin!
+
