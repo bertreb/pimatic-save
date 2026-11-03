@@ -6,7 +6,6 @@ module.exports = (env) ->
   FtpClient = require 'promise-ftp'
   #Dropbox = require('dropbox').Dropbox
   nodemailer = require('nodemailer')
-  fetch = require 'isomorphic-fetch'
   M = env.matcher
   _ = require 'lodash'
   dateFormat = require('dateformat')
@@ -354,3 +353,4 @@ module.exports = (env) ->
 
   savePlugin = new SavePlugin
   return savePlugin
+
